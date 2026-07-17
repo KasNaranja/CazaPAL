@@ -5,12 +5,13 @@
 
 export const COST_GUARD = {
   /** Hard cap on how many listings are fetched/analyzed per search, PER SOURCE
-   *  (Vinted and Wallapop each). */
-  MAX_LISTINGS_PER_SEARCH: 50,
-  /** Hard cap on total images sent to the vision model per search, across all
-   *  sources. Gemini's free tier bills nothing per image, so this is only a
-   *  sanity bound; 2 sources × 50 listings × 3 images = 300. */
-  MAX_IMAGES_PER_SEARCH: 300,
+   *  (Vinted and Wallapop each). Kept at 25 because Gemini's FREE tier allows
+   *  only ~500 requests/day and each listing = 1 request; 25×2 sources = 50 per
+   *  search means ~10 full searches/day fit the free quota. */
+  MAX_LISTINGS_PER_SEARCH: 25,
+  /** Hard cap on total images per search across all sources (only a sanity
+   *  bound; the daily quota counts REQUESTS, not images). 2×25×3 = 150. */
+  MAX_IMAGES_PER_SEARCH: 150,
   /** Max images sent per individual listing: front + back + a fallback back. */
   MAX_IMAGES_PER_LISTING: 3,
   /** How many listings to analyze concurrently. Low, because the Gemini free
