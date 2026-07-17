@@ -2,6 +2,9 @@
   "name": "cazapal",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "description": "CazaPAL — encuentra copias en español de videojuegos en Vinted, analizadas con IA gratuita (Gemini).",
   "author": "CazaPAL",
   "main": "electron/main.js",

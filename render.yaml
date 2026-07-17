@@ -1,0 +1,29 @@
+# Render blueprint for CazaPAL — deploy a free always-on Node server.
+# In Render: New + → "Blueprint" → connect the KasNaranja/CazaPAL repo.
+# The Gemini key is NOT here (sync:false) — set it in the Render dashboard.
+services:
+  - type: web
+    name: cazapal
+    runtime: node
+    plan: free
+    region: frankfurt # closest to Spain
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    autoDeploy: true # redeploy automatically on every git push to main
+    envVars:
+      - key: ENABLE_VINTED
+        value: "true"
+      - key: ENABLE_WALLAPOP
+        value: "true"
+      - key: GEMINI_VISION_MODEL
+        value: gemini-flash-lite-latest
+      - key: GEMINI_MIN_INTERVAL_MS
+        value: "4500"
+      - key: WALLAPOP_LAT
+        value: "40.4168"
+      - key: WALLAPOP_LNG
+        value: "-3.7038"
+      # Secret — set its value in the Render dashboard, never committed:
+      - key: GEMINI_API_KEY
+        sync: false
