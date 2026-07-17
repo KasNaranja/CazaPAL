@@ -1,0 +1,59 @@
+{
+  "name": "cazapal",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CazaPAL — encuentra copias en español de videojuegos en Vinted, analizadas con IA gratuita (Gemini).",
+  "author": "CazaPAL",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "electron:build": "npm run build && electron-builder --win --publish never",
+    "syntax-check": "node scripts/syntax-check.mjs && node scripts/check-imports.mjs"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.59.0",
+    "next": "14.2.15",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.16.0",
+    "@types/react": "^18.3.11",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.20",
+    "electron": "^32.1.2",
+    "electron-builder": "^25.1.8",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.13",
+    "typescript": "^5.6.2"
+  },
+  "build": {
+    "appId": "com.cazapal.app",
+    "productName": "CazaPAL",
+    "asar": true,
+    "files": [
+      "electron/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      { "from": ".next/standalone", "to": "app" },
+      { "from": ".next/static", "to": "app/.next/static" },
+      { "from": "public", "to": "app/public" }
+    ],
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "artifactName": "CazaPAL-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "CazaPAL"
+    }
+  }
+}

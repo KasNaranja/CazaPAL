@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CazaPAL — Ajustes</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    background:#fafaf9;color:#1c1917;padding:24px}
+  .logo{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+  .mark{height:34px;width:34px;display:flex;align-items:center;justify-content:center;border-radius:10px;
+    background:#ea580c;color:#fff;font-weight:900;font-size:18px}
+  .name{font-size:20px;font-weight:800} .name b{color:#ea580c}
+  h1{font-size:16px;margin:0 0 4px}
+  p{font-size:13px;color:#57534e;line-height:1.45;margin:0 0 14px}
+  a{color:#c2410c}
+  label{display:block;font-size:13px;font-weight:600;margin:0 0 6px}
+  input[type=password],input[type=text]{width:100%;height:42px;border:1px solid #e7e5e4;border-radius:10px;
+    padding:0 12px;font-size:14px;outline:none}
+  input:focus{border-color:#fdba74;box-shadow:0 0 0 4px #ffedd5}
+  .row{display:flex;align-items:center;gap:8px;margin:14px 0}
+  .btn{margin-top:18px;width:100%;height:44px;border:0;border-radius:12px;background:#ea580c;color:#fff;
+    font-weight:700;font-size:15px;cursor:pointer}
+  .btn:hover{background:#c2410c}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .hint{font-size:12px;color:#78716c;margin-top:10px}
+  .ok{font-size:13px;color:#16a34a;margin-top:10px;min-height:16px}
+</style>
+</head>
+<body>
+  <div class="logo"><span class="mark">✦</span><span class="name">Caza<b>PAL</b></span></div>
+  <h1>Pega tu clave gratuita de Gemini</h1>
+  <p>Consíguela gratis en <a href="https://aistudio.google.com" target="_blank" rel="noreferrer">aistudio.google.com</a> → <b>Get API key</b>. La clave se guarda solo en este ordenador; nunca se comparte.</p>
+
+  <label for="key">Clave de API de Gemini</label>
+  <input id="key" type="password" placeholder="AIza…" autocomplete="off" />
+
+  <div class="row">
+    <input id="vinted" type="checkbox" checked />
+    <label for="vinted" style="margin:0">Buscar en Vinted de verdad (desactívalo para usar el modo demo)</label>
+  </div>
+
+  <button class="btn" id="save" disabled>Guardar y abrir CazaPAL</button>
+  <div class="ok" id="ok"></div>
+  <p class="hint">¿Sin clave todavía? Deja el campo vacío y desmarca la casilla para probar la app en modo demo con datos de ejemplo.</p>
+
+  <script>
+    const keyEl = document.getElementById("key");
+    const vintedEl = document.getElementById("vinted");
+    const saveEl = document.getElementById("save");
+    const okEl = document.getElementById("ok");
+
+    function refresh(){
+      // Allow saving if there's a key, OR if demo mode (no key + vinted off).
+      const hasKey = keyEl.value.trim().length > 0;
+      saveEl.disabled = !(hasKey || !vintedEl.checked);
+    }
+    keyEl.addEventListener("input", refresh);
+    vintedEl.addEventListener("change", refresh);
+
+    (async () => {
+      try {
+        const cfg = await window.cazapal.getConfig();
+        vintedEl.checked = cfg.enableVinted !== false;
+        if (cfg.hasKey) keyEl.placeholder = "•••••• (ya guardada, escribe para cambiarla)";
+      } catch(e){}
+      refresh();
+    })();
+
+    saveEl.addEventListener("click", async () => {
+      saveEl.disabled = true;
+      okEl.textContent = "Guardando y arrancando…";
+      await window.cazapal.saveConfig({
+        geminiKey: keyEl.value,
+        enableVinted: vintedEl.checked,
+      });
+    });
+  </script>
+</body>
+</html>
