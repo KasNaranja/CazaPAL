@@ -74,19 +74,6 @@ async function fetchSource(
   }
 }
 
-/** Round-robin the sources so background analysis fills ALL progress bars at
- *  once instead of finishing one marketplace before starting the next. */
-function interleave(...lists: Listing[][]): Listing[] {
-  const out: Listing[] = [];
-  const n = Math.max(0, ...lists.map((l) => l.length));
-  for (let i = 0; i < n; i++) {
-    for (const list of lists) {
-      if (i < list.length) out.push(list[i]);
-    }
-  }
-  return out;
-}
-
 export async function POST(req: Request) {
   let body: { query?: string; console?: string };
   try {
@@ -153,11 +140,16 @@ export async function POST(req: Request) {
         : skip,
     ]);
 
-    listings = interleave(
-      vintedRes.listings,
-      wallapopRes.listings,
-      ebayRes.listings
-    );
+    // Analyse in SOURCE ORDER — Vinted first, then Wallapop, then eBay — so the
+    // top-priority marketplace (Vinted) is fully classified first instead of all
+    // three trickling together. The FETCH above is already parallel; the
+    // ANALYSIS can't be (Gemini's rate limit), so this only sets the ORDER in
+    // which verdicts appear.
+    listings = [
+      ...vintedRes.listings,
+      ...wallapopRes.listings,
+      ...ebayRes.listings,
+    ];
     sources = {
       vinted: { total: vintedRes.listings.length, error: vintedRes.error },
       wallapop: {
