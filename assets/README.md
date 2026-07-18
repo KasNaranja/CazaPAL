@@ -16,3 +16,9 @@ Tipografía del logotipo: **Anton** (Google Fonts).
 - `precios-logo.png` — mirilla + `PRECIOS` (blanco).
 
 Los PNG están exportados a 3x para uso nítido en web y retina.
+
+## Logos de marketplaces (`marketplaces/`)
+Marcas de terceros usadas para identificar el origen de cada anuncio (propiedad de sus dueños).
+- `vinted.png`
+- `wallapop.webp`
+- `ebay.webp`
