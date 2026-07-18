@@ -19,14 +19,15 @@ export type LanguageVerdict =
 
 // Marketplaces CazaPAL searches. Each listing carries its source so the UI can
 // show two independent progress bars and tag every card.
-export type MarketSource = "vinted" | "wallapop";
+export type MarketSource = "vinted" | "wallapop" | "ebay";
 
 export const MARKET_LABELS: Record<MarketSource, string> = {
   vinted: "Vinted",
   wallapop: "Wallapop",
+  ebay: "eBay",
 };
 
-export const MARKET_SOURCES: MarketSource[] = ["vinted", "wallapop"];
+export const MARKET_SOURCES: MarketSource[] = ["vinted", "wallapop", "ebay"];
 
 export type ConsoleKey =
   | "todas"

@@ -31,6 +31,10 @@ export const config = {
   wallapopEnabled: (process.env.ENABLE_WALLAPOP || "true").toLowerCase() === "true",
   wallapopLat: process.env.WALLAPOP_LAT?.trim() || "40.4168",
   wallapopLng: process.env.WALLAPOP_LNG?.trim() || "-3.7038",
+  // eBay Browse API app credentials (developer.ebay.com). eBay is searched only
+  // when BOTH are present.
+  ebayClientId: process.env.EBAY_CLIENT_ID?.trim() || "",
+  ebayClientSecret: process.env.EBAY_CLIENT_SECRET?.trim() || "",
   dbPath: process.env.CAZAPAL_DB_PATH?.trim() || "",
   forcedDemo: (process.env.DEMO_MODE || "").toLowerCase() === "true",
 };

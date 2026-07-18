@@ -142,7 +142,7 @@ export default function Home() {
             Encuentra tu juego <span className="text-brand-600">en español</span>
           </h1>
           <p className="mx-auto mt-3 max-w-lg text-center text-stone-500">
-            Buscamos en Vinted y Wallapop y analizamos las fotos con IA para enseñarte solo
+            Buscamos en Vinted, Wallapop y eBay y analizamos las fotos con IA para enseñarte solo
             las copias en castellano, de la más barata a la más cara.
           </p>
 
@@ -202,7 +202,7 @@ export default function Home() {
 
               {total === 0 ? (
                 <div className="pt-10">
-                  <EmptyState title="No hay anuncios de ese juego ahora mismo en Vinted ni Wallapop">
+                  <EmptyState title="No hay anuncios de ese juego ahora mismo en Vinted, Wallapop ni eBay">
                     <p className="text-sm text-stone-500">
                       Prueba con otro título o revisa la ortografía.
                     </p>
@@ -281,7 +281,7 @@ function Header({
       </button>
       {compact && (
         <span className="hidden text-sm text-stone-400 sm:inline">
-          Copias en español · Vinted + Wallapop
+          Copias en español · Vinted · Wallapop · eBay
         </span>
       )}
     </header>
@@ -311,7 +311,7 @@ function Footer() {
   return (
     <footer className="mt-16 border-t border-stone-200 pt-6 text-center text-xs text-stone-400">
       <p>
-        CazaPAL analiza fotos públicas de anuncios de Vinted y Wallapop con IA. Los
+        CazaPAL analiza fotos públicas de anuncios de Vinted, Wallapop y eBay con IA. Los
         veredictos son orientativos: confirma siempre con el vendedor antes de
         comprar. Atajos: <kbd className="rounded border px-1">/</kbd> buscar ·{" "}
         <kbd className="rounded border px-1">s</kbd> solo en español.

@@ -76,7 +76,7 @@ export function DemoBanner({ reason }: { reason: string | null }) {
         Añade tu clave gratuita de{" "}
         <code className="rounded bg-amber-100 px-1">GEMINI_API_KEY</code> y activa{" "}
         <code className="rounded bg-amber-100 px-1">ENABLE_VINTED=true</code>{" "}
-        para buscar en Vinted y Wallapop de verdad.
+        para buscar en Vinted, Wallapop y eBay de verdad.
       </p>
     </div>
   );

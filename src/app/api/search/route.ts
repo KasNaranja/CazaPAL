@@ -10,6 +10,7 @@ import {
   searchListings as searchWallapop,
   WallapopError,
 } from "@/lib/wallapop";
+import { searchListings as searchEbay, EbayError } from "@/lib/ebay";
 import type {
   ApiError,
   ConsoleKey,
@@ -57,7 +58,12 @@ async function fetchSource(
     return { listings, error: null };
   } catch (e) {
     let kind: string | undefined;
-    if (e instanceof VintedError || e instanceof WallapopError) kind = e.kind;
+    if (
+      e instanceof VintedError ||
+      e instanceof WallapopError ||
+      e instanceof EbayError
+    )
+      kind = e.kind;
     const error =
       kind === "blocked"
         ? `${label} ha bloqueado la petición. Inténtalo en un minuto.`
@@ -68,14 +74,15 @@ async function fetchSource(
   }
 }
 
-/** Alternate two sources so background analysis fills BOTH progress bars at
- *  once instead of finishing one marketplace before starting the other. */
-function interleave(a: Listing[], b: Listing[]): Listing[] {
+/** Round-robin the sources so background analysis fills ALL progress bars at
+ *  once instead of finishing one marketplace before starting the next. */
+function interleave(...lists: Listing[][]): Listing[] {
   const out: Listing[] = [];
-  const n = Math.max(a.length, b.length);
+  const n = Math.max(0, ...lists.map((l) => l.length));
   for (let i = 0; i < n; i++) {
-    if (i < a.length) out.push(a[i]);
-    if (i < b.length) out.push(b[i]);
+    for (const list of lists) {
+      if (i < list.length) out.push(list[i]);
+    }
   }
   return out;
 }
@@ -114,9 +121,12 @@ export async function POST(req: Request) {
     sources = {
       vinted: { total: listings.length, error: null },
       wallapop: { total: 0, error: null },
+      ebay: { total: 0, error: null },
     };
   } else {
-    const [vintedRes, wallapopRes] = await Promise.all([
+    const skip = Promise.resolve<SourceResult>({ listings: [], error: null });
+    const ebayEnabled = !!(config.ebayClientId && config.ebayClientSecret);
+    const [vintedRes, wallapopRes, ebayRes] = await Promise.all([
       config.vintedEnabled
         ? fetchSource(
             "Vinted",
@@ -124,7 +134,7 @@ export async function POST(req: Request) {
             query,
             consoleKey
           )
-        : Promise.resolve<SourceResult>({ listings: [], error: null }),
+        : skip,
       config.wallapopEnabled
         ? fetchSource(
             "Wallapop",
@@ -132,24 +142,43 @@ export async function POST(req: Request) {
             query,
             consoleKey
           )
-        : Promise.resolve<SourceResult>({ listings: [], error: null }),
+        : skip,
+      ebayEnabled
+        ? fetchSource(
+            "eBay",
+            () => searchEbay(query, consoleKey, CAP),
+            query,
+            consoleKey
+          )
+        : skip,
     ]);
 
-    listings = interleave(vintedRes.listings, wallapopRes.listings);
+    listings = interleave(
+      vintedRes.listings,
+      wallapopRes.listings,
+      ebayRes.listings
+    );
     sources = {
       vinted: { total: vintedRes.listings.length, error: vintedRes.error },
       wallapop: {
         total: wallapopRes.listings.length,
         error: wallapopRes.error,
       },
+      ebay: { total: ebayRes.listings.length, error: ebayRes.error },
     };
 
-    // Only a hard error if BOTH marketplaces failed and we have nothing.
-    if (listings.length === 0 && vintedRes.error && wallapopRes.error) {
+    // Only a hard error if EVERY marketplace failed and we have nothing.
+    const anyError =
+      vintedRes.error || wallapopRes.error || ebayRes.error;
+    const allFailed =
+      (!config.vintedEnabled || vintedRes.error) &&
+      (!config.wallapopEnabled || wallapopRes.error) &&
+      (!ebayEnabled || ebayRes.error);
+    if (listings.length === 0 && anyError && allFailed) {
       return NextResponse.json<ApiError>(
         {
           error:
-            "Ni Vinted ni Wallapop responden ahora mismo. Inténtalo en un minuto.",
+            "Las tiendas no responden ahora mismo. Inténtalo en un minuto.",
           code: "sources_unavailable",
         },
         { status: 503 }

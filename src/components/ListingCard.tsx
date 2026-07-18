@@ -11,11 +11,12 @@ import {
 } from "@/lib/types";
 
 // Marketplace logos (served from /public/logo). Shown as a small icon on each
-// card instead of the marketplace name — the V and the flower are recognizable
-// at a glance and don't clash with the language badges.
-const SOURCE_LOGO: Record<MarketSource, string> = {
+// card instead of the marketplace name. Sources without a logo file fall back to
+// a text pill, so a new source works before its logo is added.
+const SOURCE_LOGO: Partial<Record<MarketSource, string>> = {
   vinted: "/logo/vinted.png",
   wallapop: "/logo/wallapop.webp",
+  // ebay: add "/logo/ebay.png" once provided; falls back to a text pill for now.
 };
 
 export function ListingCard({ listing }: { listing: Listing }) {
@@ -116,14 +117,23 @@ export function ListingCard({ listing }: { listing: Listing }) {
         </div>
 
         <div className="absolute bottom-2 left-2">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={SOURCE_LOGO[listing.source]}
-            alt={MARKET_LABELS[listing.source]}
-            title={MARKET_LABELS[listing.source]}
-            className="h-8 w-8 rounded-lg shadow-md ring-1 ring-black/5"
-            loading="lazy"
-          />
+          {SOURCE_LOGO[listing.source] ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={SOURCE_LOGO[listing.source]}
+              alt={MARKET_LABELS[listing.source]}
+              title={MARKET_LABELS[listing.source]}
+              className="h-8 w-8 rounded-lg shadow-md ring-1 ring-black/5"
+              loading="lazy"
+            />
+          ) : (
+            <span
+              title={MARKET_LABELS[listing.source]}
+              className="inline-flex h-8 items-center rounded-lg bg-black/70 px-2 text-xs font-bold text-white shadow-md"
+            >
+              {MARKET_LABELS[listing.source]}
+            </span>
+          )}
         </div>
       </div>
 

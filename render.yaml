@@ -34,3 +34,9 @@ services:
         sync: false
       - key: UPSTASH_REDIS_REST_TOKEN
         sync: false
+      # eBay Browse API app credentials (developer.ebay.com). eBay is searched
+      # only when both are set. Optional.
+      - key: EBAY_CLIENT_ID
+        sync: false
+      - key: EBAY_CLIENT_SECRET
+        sync: false
