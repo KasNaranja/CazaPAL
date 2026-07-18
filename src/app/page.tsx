@@ -128,13 +128,16 @@ export default function Home() {
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-6xl px-4 pb-24">
-      <Header
-        compact={showResults}
-        onLogoClick={() => {
-          setActive(null);
-          search.reset();
-        }}
-      />
+      {/* Header (logo + name) only on the landing screen. Once you've searched,
+          the results view starts straight with the search bar, like Vinted. */}
+      {!showResults && (
+        <Header
+          onLogoClick={() => {
+            setActive(null);
+            search.reset();
+          }}
+        />
+      )}
 
       {!showResults ? (
         <section className="mx-auto max-w-2xl pt-10 sm:pt-20">
@@ -257,15 +260,9 @@ export default function Home() {
   );
 }
 
-function Header({
-  compact,
-  onLogoClick,
-}: {
-  compact: boolean;
-  onLogoClick: () => void;
-}) {
+function Header({ onLogoClick }: { onLogoClick: () => void }) {
   return (
-    <header className="flex items-center justify-between py-5">
+    <header className="flex items-center py-5">
       <button
         type="button"
         onClick={onLogoClick}
@@ -279,11 +276,6 @@ function Header({
           Caza<span className="text-brand-600">PAL</span>
         </span>
       </button>
-      {compact && (
-        <span className="hidden text-sm text-stone-400 sm:inline">
-          Copias en español · Vinted · Wallapop · eBay
-        </span>
-      )}
     </header>
   );
 }
