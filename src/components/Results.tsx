@@ -16,7 +16,7 @@ function sorter(sort: SortKey) {
 
 function Grid({ listings }: { listings: Listing[] }) {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
       {listings.map((l) => (
         <ListingCard key={`${l.source}-${l.vintedId}`} listing={l} />
       ))}

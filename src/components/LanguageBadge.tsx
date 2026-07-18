@@ -49,16 +49,16 @@ export function LanguageBadge({
         aria-haspopup="dialog"
         aria-expanded={open}
         className={[
-          "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold",
+          "inline-flex max-w-full items-center gap-1 rounded-full border px-1.5 py-0.5 text-[11px] font-semibold sm:gap-1.5 sm:px-2.5 sm:py-1 sm:text-xs",
           meta.className,
           pending ? "animate-pulseSoft" : "",
         ].join(" ")}
       >
         <span
-          className={["h-1.5 w-1.5 rounded-full", meta.dotClassName].join(" ")}
+          className={["h-1.5 w-1.5 shrink-0 rounded-full", meta.dotClassName].join(" ")}
           aria-hidden
         />
-        {meta.label}
+        <span className="truncate">{meta.label}</span>
       </button>
 
       {open && (
