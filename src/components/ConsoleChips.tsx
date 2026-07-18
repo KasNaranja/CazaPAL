@@ -11,7 +11,7 @@ export function ConsoleChips({
 }) {
   return (
     <div
-      className="flex flex-wrap gap-2"
+      className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-0.5 sm:mx-0 sm:flex-wrap sm:px-0"
       role="radiogroup"
       aria-label="Consola"
     >
@@ -25,7 +25,7 @@ export function ConsoleChips({
             aria-checked={active}
             onClick={() => onChange(opt.key)}
             className={[
-              "rounded-full px-3.5 py-2 text-sm font-medium transition min-h-[40px]",
+              "shrink-0 whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-medium transition min-h-[40px]",
               "border",
               active
                 ? "bg-brand-600 text-white border-brand-600 shadow-sm"
