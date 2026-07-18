@@ -128,23 +128,18 @@ export default function Home() {
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-6xl px-4 pb-24">
-      {/* Header (logo + name) only on the landing screen. Once you've searched,
-          the results view starts straight with the search bar, like Vinted. */}
-      {!showResults && (
-        <Header
-          onLogoClick={() => {
-            setActive(null);
-            search.reset();
-          }}
-        />
-      )}
-
       {!showResults ? (
-        <section className="mx-auto max-w-2xl pt-10 sm:pt-20">
-          <h1 className="text-center text-3xl font-extrabold tracking-tight text-stone-900 sm:text-4xl">
-            Encuentra tu juego <span className="text-brand-600">en español</span>
-          </h1>
-          <p className="mx-auto mt-3 max-w-lg text-center text-stone-500">
+        <section className="mx-auto max-w-2xl pt-8 sm:pt-14">
+          {/* Brand logo on a dark card so the white "PAL" shows clearly. */}
+          <div className="mx-auto flex max-w-xs items-center justify-center rounded-3xl bg-stone-900 px-6 py-6 shadow-sm">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/brand/palespana-logo.png"
+              alt="PAL España"
+              className="h-40 w-auto sm:h-48"
+            />
+          </div>
+          <p className="mx-auto mt-5 max-w-lg text-center text-stone-500">
             Buscamos en Vinted, Wallapop y eBay y analizamos las fotos con IA para enseñarte solo
             las copias en castellano, de la más barata a la más cara.
           </p>
@@ -260,26 +255,6 @@ export default function Home() {
   );
 }
 
-function Header({ onLogoClick }: { onLogoClick: () => void }) {
-  return (
-    <header className="flex items-center py-5">
-      <button
-        type="button"
-        onClick={onLogoClick}
-        className="flex items-center gap-2"
-        aria-label="Volver al inicio"
-      >
-        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-600 text-lg font-black text-white">
-          ✦
-        </span>
-        <span className="text-xl font-extrabold tracking-tight text-stone-900">
-          Caza<span className="text-brand-600">PAL</span>
-        </span>
-      </button>
-    </header>
-  );
-}
-
 function SkeletonGrid() {
   return (
     <div className="grid grid-cols-2 gap-2.5 pt-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
@@ -300,14 +275,39 @@ function SkeletonGrid() {
 }
 
 function Footer() {
+  // Fixed bottom navigation bar, Vinted-style. Dark so the white "CAZA"/"PRECIOS"
+  // logos read. Both link to the home page for now.
   return (
-    <footer className="mt-16 border-t border-stone-200 pt-6 text-center text-xs text-stone-400">
-      <p>
-        CazaPAL analiza fotos públicas de anuncios de Vinted, Wallapop y eBay con IA. Los
-        veredictos son orientativos: confirma siempre con el vendedor antes de
-        comprar. Atajos: <kbd className="rounded border px-1">/</kbd> buscar ·{" "}
-        <kbd className="rounded border px-1">s</kbd> solo en español.
-      </p>
-    </footer>
+    <nav
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-black/20 bg-stone-900"
+      aria-label="Navegación"
+    >
+      <div className="mx-auto flex max-w-md items-stretch justify-around">
+        <a
+          href="/"
+          aria-label="Caza"
+          className="flex flex-1 items-center justify-center py-1.5 transition hover:bg-white/5"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/brand/caza-logo.png"
+            alt="Caza"
+            className="h-14 w-auto"
+          />
+        </a>
+        <a
+          href="/"
+          aria-label="Precios"
+          className="flex flex-1 items-center justify-center py-1.5 transition hover:bg-white/5"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/brand/precios-logo.png"
+            alt="Precios"
+            className="h-14 w-auto"
+          />
+        </a>
+      </div>
+    </nav>
   );
 }

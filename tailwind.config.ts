@@ -5,18 +5,24 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // CazaPAL palette — warm "cartucho" tones on a soft neutral.
+        // PAL España palette — bandera roja y gualda sobre neutro.
         brand: {
-          50: "#fff7ed",
-          100: "#ffedd5",
-          200: "#fed7aa",
-          300: "#fdba74",
-          400: "#fb923c",
-          500: "#f97316",
-          600: "#ea580c",
-          700: "#c2410c",
-          800: "#9a3412",
-          900: "#7c2d12",
+          50: "#fef2f3",
+          100: "#fde0e3",
+          200: "#fbc5cb",
+          300: "#f79aa4",
+          400: "#f0687a",
+          500: "#e63946",
+          600: "#d81e2f",
+          700: "#b51826",
+          800: "#921521",
+          900: "#7a1620",
+        },
+        // Amarillo gualda de la bandera (acento secundario).
+        gold: {
+          400: "#f7d24a",
+          500: "#f5c518",
+          600: "#d9a90a",
         },
         verdict: {
           es: "#16a34a",

@@ -3,13 +3,13 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "CazaPAL — copias en español en Vinted, Wallapop y eBay",
+  title: "PAL España — copias en español en Vinted, Wallapop y eBay",
   description:
-    "Busca un videojuego en Vinted, Wallapop y eBay; CazaPAL analiza las fotos con IA para mostrarte solo las copias en español, de más barata a más cara.",
+    "Busca un videojuego en Vinted, Wallapop y eBay; PAL España analiza las fotos con IA para mostrarte solo las copias en español, de más barata a más cara.",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#ea580c",
+  themeColor: "#e63946",
   width: "device-width",
   initialScale: 1,
 };
