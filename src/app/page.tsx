@@ -314,31 +314,36 @@ function Footer({
       aria-label="Navegación"
     >
       <div className="mx-auto flex max-w-md items-stretch justify-around">
+        {/* Caza — mirilla + palabra, recreado en código para que los 3 accesos
+            sean idénticos en estilo (icono rojo + palabra Anton blanca). */}
         <button
           type="button"
           onClick={() => onNav("search")}
           aria-label="Caza (buscador)"
           aria-current={view === "search"}
-          className="flex flex-1 items-center justify-center py-1.5 transition hover:bg-white/5"
+          className="flex flex-1 flex-col items-center justify-center gap-1 py-2 transition hover:bg-white/5"
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/brand/caza-logo.png" alt="Caza" className="h-14 w-auto" />
+          <Mirilla size={28} />
+          <span className="font-display text-[12px] leading-none tracking-wide text-texto-1">
+            CAZA
+          </span>
         </button>
 
+        {/* Favoritos — mismo lockup pero con corazón rojo + contador */}
         <button
           type="button"
           onClick={() => onNav("favorites")}
           aria-label={`Favoritos${count ? ` (${count})` : ""}`}
           aria-current={view === "favorites"}
-          className="relative flex flex-1 items-center justify-center py-1.5 transition hover:bg-white/5"
+          className="relative flex flex-1 flex-col items-center justify-center gap-1 py-2 transition hover:bg-white/5"
         >
           <svg
-            width="34"
-            height="34"
+            width="28"
+            height="28"
             viewBox="0 0 24 24"
             aria-hidden
             fill={view === "favorites" ? "currentColor" : "none"}
-            className={view === "favorites" ? "text-brand-500" : "text-white"}
+            className="text-brand-500"
           >
             <path
               d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
@@ -348,24 +353,27 @@ function Footer({
               strokeLinejoin="round"
             />
           </svg>
+          <span className="font-display text-[12px] leading-none tracking-wide text-texto-1">
+            FAVORITOS
+          </span>
           {count > 0 && (
-            <span className="absolute right-[26%] top-1.5 min-w-[18px] rounded-full bg-brand-600 px-1 text-center text-[11px] font-bold leading-[18px] text-white">
+            <span className="absolute right-[24%] top-0.5 min-w-[17px] rounded-full bg-brand-600 px-1 text-center text-[10px] font-bold leading-[17px] text-white ring-2 ring-panel">
               {count}
             </span>
           )}
         </button>
+
+        {/* Precios — misma mirilla + palabra */}
         <button
           type="button"
           onClick={() => onNav("search")}
           aria-label="Precios"
-          className="flex flex-1 items-center justify-center py-1.5 transition hover:bg-white/5"
+          className="flex flex-1 flex-col items-center justify-center gap-1 py-2 transition hover:bg-white/5"
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/brand/precios-logo.png"
-            alt="Precios"
-            className="h-14 w-auto"
-          />
+          <Mirilla size={28} />
+          <span className="font-display text-[12px] leading-none tracking-wide text-texto-1">
+            PRECIOS
+          </span>
         </button>
       </div>
     </nav>
