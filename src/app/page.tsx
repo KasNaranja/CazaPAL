@@ -11,8 +11,10 @@ import { SortDropdown, type SortKey } from "@/components/SortDropdown";
 import { Results } from "@/components/Results";
 import { DemoBanner, EmptyState, ErrorState } from "@/components/States";
 import { Mirilla } from "@/components/Mirilla";
+import { Favorites } from "@/components/Favorites";
 import { getStatus, postSearch, CazaApiError } from "@/lib/api";
 import { useRecentSearches } from "@/lib/useRecentSearches";
+import { useFavorites } from "@/lib/useFavorites";
 import { consoleKeep } from "@/lib/filter";
 import { MARKET_LABELS, MARKET_SOURCES } from "@/lib/types";
 import type {
@@ -43,6 +45,8 @@ export default function Home() {
   // turns it on when they want to filter. Also reset to OFF on each new search.
   const [soloEspanol, setSoloEspanol] = useState(false);
   const [sort, setSort] = useState<SortKey>("total");
+  // Footer view: the search (Caza) or the saved favorites list.
+  const [view, setView] = useState<"search" | "favorites">("search");
 
   const inputRef = useRef<HTMLInputElement>(null);
   const lastSubmit = useRef<{ q: string; c: ConsoleKey } | null>(null);
@@ -139,7 +143,9 @@ export default function Home() {
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-6xl px-4 pb-24">
-      {!showResults ? (
+      {view === "favorites" ? (
+        <Favorites />
+      ) : !showResults ? (
         <section className="mx-auto max-w-2xl pt-8 sm:pt-14">
           {/* Brand logo straight on the dark page background — the PNG is
               transparent and its white "PAL" reads on carbon, so no plate. */}
@@ -268,7 +274,7 @@ export default function Home() {
         </section>
       )}
 
-      <Footer />
+      <Footer view={view} onNav={setView} />
     </main>
   );
 }
@@ -292,29 +298,65 @@ function SkeletonGrid() {
   );
 }
 
-function Footer() {
-  // Fixed bottom navigation bar, Vinted-style. Dark so the white "CAZA"/"PRECIOS"
-  // logos read. Both link to the home page for now.
+function Footer({
+  view,
+  onNav,
+}: {
+  view: "search" | "favorites";
+  onNav: (v: "search" | "favorites") => void;
+}) {
+  // Fixed bottom nav, Vinted-style: Caza (buscador) · corazón (favoritos) ·
+  // Precios. The white logos read on the dark bar.
+  const { count } = useFavorites();
   return (
     <nav
       className="fixed inset-x-0 bottom-0 z-40 border-t border-borde bg-panel"
       aria-label="Navegación"
     >
       <div className="mx-auto flex max-w-md items-stretch justify-around">
-        <a
-          href="/"
-          aria-label="Caza"
+        <button
+          type="button"
+          onClick={() => onNav("search")}
+          aria-label="Caza (buscador)"
+          aria-current={view === "search"}
           className="flex flex-1 items-center justify-center py-1.5 transition hover:bg-white/5"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/brand/caza-logo.png"
-            alt="Caza"
-            className="h-14 w-auto"
-          />
-        </a>
-        <a
-          href="/"
+          <img src="/brand/caza-logo.png" alt="Caza" className="h-14 w-auto" />
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onNav("favorites")}
+          aria-label={`Favoritos${count ? ` (${count})` : ""}`}
+          aria-current={view === "favorites"}
+          className="relative flex flex-1 items-center justify-center py-1.5 transition hover:bg-white/5"
+        >
+          <svg
+            width="34"
+            height="34"
+            viewBox="0 0 24 24"
+            aria-hidden
+            fill={view === "favorites" ? "currentColor" : "none"}
+            className={view === "favorites" ? "text-brand-500" : "text-white"}
+          >
+            <path
+              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          {count > 0 && (
+            <span className="absolute right-[26%] top-1.5 min-w-[18px] rounded-full bg-brand-600 px-1 text-center text-[11px] font-bold leading-[18px] text-white">
+              {count}
+            </span>
+          )}
+        </button>
+        <button
+          type="button"
+          onClick={() => onNav("search")}
           aria-label="Precios"
           className="flex flex-1 items-center justify-center py-1.5 transition hover:bg-white/5"
         >
@@ -324,7 +366,7 @@ function Footer() {
             alt="Precios"
             className="h-14 w-auto"
           />
-        </a>
+        </button>
       </div>
     </nav>
   );
