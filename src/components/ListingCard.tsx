@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { LanguageBadge } from "./LanguageBadge";
 import { formatPrice } from "@/lib/format";
+import { useFavorites } from "@/lib/useFavorites";
 import {
   MARKET_LABELS,
   totalPrice,
@@ -26,7 +26,8 @@ const LOGO_PLATE: Partial<Record<MarketSource, string>> = {
 };
 
 export function ListingCard({ listing }: { listing: Listing }) {
-  const [copied, setCopied] = useState(false);
+  const { isFavorite, toggle } = useFavorites();
+  const fav = isFavorite(listing.source, listing.vintedId);
   const total = totalPrice(listing);
   // Prefer the light thumbnail for the card; fall back to the full photo.
   const photo = listing.thumbUrl ?? listing.photoUrls[0];
@@ -35,16 +36,10 @@ export function ListingCard({ listing }: { listing: Listing }) {
     window.open(listing.listingUrl, "_blank", "noopener,noreferrer");
   }
 
-  async function copyLink(e: React.MouseEvent) {
+  function onFav(e: React.MouseEvent) {
     e.stopPropagation();
     e.preventDefault();
-    try {
-      await navigator.clipboard.writeText(listing.listingUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch {
-      /* clipboard blocked; ignore */
-    }
+    toggle(listing);
   }
 
   return (
@@ -99,44 +94,36 @@ export function ListingCard({ listing }: { listing: Listing }) {
           )}
         </div>
 
-        {/* Copy link — top-right */}
+        {/* Favorite (heart) — top-right. Vinted-style, but the brand red when
+            saved: white outline → filled #e63946 heart on tap. */}
         <div className="absolute right-1.5 top-1.5">
           <button
             type="button"
-            onClick={copyLink}
-            title="Copiar enlace"
-            aria-label="Copiar enlace del anuncio"
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-black/55 text-texto-1 shadow-sm backdrop-blur transition hover:bg-black/75 hover:text-white"
+            onClick={onFav}
+            aria-pressed={fav}
+            title={fav ? "Quitar de favoritos" : "Guardar en favoritos"}
+            aria-label={fav ? "Quitar de favoritos" : "Guardar en favoritos"}
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-black/55 shadow-sm backdrop-blur transition hover:bg-black/75 active:scale-90"
           >
-            {copied ? (
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <path
-                  d="m5 13 4 4L19 7"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            ) : (
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-                <rect
-                  x="9"
-                  y="9"
-                  width="11"
-                  height="11"
-                  rx="2"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                />
-                <path
-                  d="M5 15V5a2 2 0 0 1 2-2h10"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            )}
+            <svg
+              width="19"
+              height="19"
+              viewBox="0 0 24 24"
+              aria-hidden
+              fill={fav ? "currentColor" : "none"}
+              className={[
+                "transition-transform duration-150",
+                fav ? "scale-110 text-brand-500" : "text-white",
+              ].join(" ")}
+            >
+              <path
+                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </button>
         </div>
 
