@@ -186,7 +186,9 @@ export async function searchListings(
   const summaries: any[] = (data?.itemSummaries ?? []).slice(0, perPage);
 
   // Enrich each with its full photo set (back cover) — bounded concurrency.
-  const listings = await mapLimit(summaries, 6, async (s) => {
+  // 12 en paralelo: esta fase alarga la respuesta inicial de la búsqueda (una
+  // llamada getItem por anuncio) y el límite diario de eBay es holgado (5.000).
+  const listings = await mapLimit(summaries, 12, async (s) => {
     const photos = await fetchItemPhotos(s.itemId);
     return summaryToListing(s, photos);
   });

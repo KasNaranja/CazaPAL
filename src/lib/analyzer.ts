@@ -14,6 +14,7 @@ import {
   updateListingVerdict,
 } from "./db";
 import { getDemoVerdict } from "./demo";
+import { totalPrice } from "./types";
 import type { Listing, LanguageVerdict } from "./types";
 import { analyzeImages } from "./vision";
 
@@ -205,6 +206,15 @@ export async function startAnalysis(searchId: string): Promise<void> {
         pending.push(l);
       }
     });
+
+    // ORDEN DE ANÁLISIS = MÁS BARATOS PRIMERO. El análisis está limitado por el
+    // ritmo de Gemini (no por latencia), así que no podemos hacerlo más rápido
+    // en total — pero SÍ decidir qué se resuelve antes. La vista ordena por
+    // precio, así que analizando de barato a caro los veredictos aparecen en las
+    // tarjetas de arriba (las que el usuario mira) en segundos, en vez de tener
+    // que esperar a que termine todo. Antes se analizaba por orden de fuente:
+    // el chollo más barato podía ser el ÚLTIMO en resolverse.
+    pending.sort((a, b) => totalPrice(a) - totalPrice(b));
 
     if (demo) {
       await runPool(pending, COST_GUARD.ANALYSIS_CONCURRENCY, (l) =>
