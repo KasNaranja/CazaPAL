@@ -45,13 +45,13 @@ function nowIso() {
  */
 function selectPhotos(all: string[]): string[] {
   if (all.length <= 1) return all.slice(0, 1);
-  // MEDIDO: el análisis topa en ~1/s y la latencia por llamada sube al subir el
-  // paralelismo → el freno es el TAMAÑO del envío (fotos a tamaño completo en
-  // base64). Enviamos 2 en vez de 3: la portada (0) y la SEGUNDA (1), que es la
-  // contraportada en la inmensa mayoría de anuncios y la que decide el idioma.
-  // Se pierde el comodín de "última foto" (para el vendedor que puso la
-  // contraportada al final), a cambio de ~1/3 menos de carga por llamada.
-  return [all[0], all[1]];
+  // PROBADO Y REVERTIDO: enviar 2 fotos en vez de 3 solo bajó la latencia un 3%
+  // (11.857 → 11.515 ms), así que no compensaba perder el comodín de la última
+  // foto (los anuncios donde el vendedor pone la contraportada al final). El
+  // freno real no es el tamaño del envío, sino la capacidad de la instancia.
+  if (all.length === 2) return [all[0], all[1]];
+  const picks = [all[0], all[1], all[all.length - 1]];
+  return Array.from(new Set(picks));
 }
 
 async function analyzeOneLive(
