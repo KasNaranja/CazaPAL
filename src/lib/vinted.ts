@@ -108,7 +108,7 @@ async function bootstrapSession(force = false): Promise<void> {
   }
 }
 
-async function apiGet(pathWithQuery: string, retryOn401 = true): Promise<any> {
+async function apiGet(pathWithQuery: string, retryOnAuth = true): Promise<any> {
   await bootstrapSession();
   let res: Response;
   try {
@@ -129,7 +129,13 @@ async function apiGet(pathWithQuery: string, retryOn401 = true): Promise<any> {
     );
   }
 
-  if (res.status === 401 && retryOn401) {
+  // 401 (sesión caducada) y 403 (anti-bot rechazando una cookie rancia) suelen
+  // arreglarse renovando la sesión anónima. Antes el 403 fallaba a la primera y
+  // el usuario veía "Vinted ha bloqueado la petición" aunque un simple reintento
+  // con cookies nuevas hubiera funcionado. Reintentamos UNA vez, con una pausa
+  // breve para no parecer un bucle automático.
+  if ((res.status === 401 || res.status === 403) && retryOnAuth) {
+    await new Promise((r) => setTimeout(r, 900));
     await bootstrapSession(true);
     return apiGet(pathWithQuery, false);
   }
@@ -252,7 +258,11 @@ export async function searchListings(
   params.set("search_text", query);
   // Fetch a POOL larger than we'll analyze (capped at Vinted's max ~96) so noisy
   // queries still surface the real matches before the relevance filter + cap.
-  params.set("per_page", String(Math.min(Math.max(perPage, 96), 96)));
+  // Pool mayor que el cap de análisis para que el ruido no entierre las
+  // coincidencias, pero SIN pasarse: 96 (el máximo) es muy llamativo para el
+  // anti-bot de Vinted y nos empezó a devolver 403. 48 es lo que usa su propia
+  // web y sigue siendo casi 2× el cap.
+  params.set("per_page", String(Math.min(Math.max(perPage, 48), 48)));
   // "relevance" (Vinted's own match ranking) surfaces the copies that actually
   // match the game, including older listings. "newest_first" only returned the
   // most recently uploaded ones, burying older matches beyond our fetch window
