@@ -278,6 +278,12 @@ export async function analyzeImages(imageUrls: string[]): Promise<VisionResult> 
       // y el rendimiento caía al de 1 sola clave).
       if (/per\s*day/i.test(detail)) {
         ks.parkedUntil = Date.now() + 30 * 60 * 1000; // cuota diaria agotada
+      } else {
+        // Límite POR MINUTO (ojo: es por PROYECTO, así que varias claves del
+        // mismo proyecto se pisan). Pausa corta para que la ventana se recupere:
+        // sin ella el motor reintenta en bucle contra claves limitadas y el
+        // rendimiento se desploma; con 30 min se aparcaban casi todas.
+        ks.parkedUntil = Date.now() + 20 * 1000;
       }
       continue; // move to another key
     }
